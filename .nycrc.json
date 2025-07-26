@@ -1,0 +1,29 @@
+{
+  "all": true,
+  "include": [
+    "server/**/*.js",
+    "client/**/*.{ts,tsx}"
+  ],
+  "exclude": [
+    "**/*.test.{js,ts,tsx}",
+    "**/*.spec.{js,ts,tsx}",
+    "**/tests/**",
+    "**/node_modules/**",
+    "server/index.js",
+    "client/next.config.js",
+    "client/tailwind.config.ts",
+    "client/postcss.config.js",
+    "cypress/**",
+    "coverage/**",
+    "jest.config.js",
+    "cypress.config.ts"
+  ],
+  "reporter": ["text", "lcov", "html"],
+  "report-dir": "./coverage",
+  "temp-dir": "./.nyc_output",
+  "check-coverage": true,
+  "branches": 100,
+  "lines": 100,
+  "functions": 100,
+  "statements": 100
+}
