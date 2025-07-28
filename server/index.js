@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
 
 const app = express();
 const httpServer = createServer(app);
@@ -32,10 +33,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/', limiter);
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/socialize', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/socialize')
+.then(() => {
   console.log('Connected to MongoDB');
 }).catch((err) => {
   console.error('MongoDB connection error:', err);
@@ -49,6 +48,21 @@ app.use('/api/auth', authRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// Serve static files from Next.js build
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../.next/static')));
+  app.use(express.static(path.join(__dirname, '../public')));
+  
+  // Handle Next.js routing
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ message: 'API route not found' });
+    }
+    res.sendFile(path.join(__dirname, '../.next/server/pages/index.html'));
+  });
+}
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -67,8 +81,12 @@ io.on('connection', (socket) => {
 });
 
 if (process.env.NODE_ENV !== 'test') {
-  const PORT = process.env.PORT || 5000;
-  httpServer.listen(PORT, () => {
-    console.log('Server running on port ' + PORT);
+  const PORT = process.env.PORT || 3000;
+  httpServer.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`MongoDB URI: ${process.env.MONGODB_URI ? 'Connected' : 'Not configured'}`);
   });
 }
+
+module.exports = { app, httpServer, io };

@@ -1,20 +1,33 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "allowJs": true,
+    "incremental": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "server/**/*",
-    "client/**/*"
+    "client/**/*",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
