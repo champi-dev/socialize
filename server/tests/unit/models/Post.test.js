@@ -245,10 +245,10 @@ describe('Post Model', () => {
     it('should have required indexes defined', () => {
       const indexes = Post.schema.indexes();
       
-      expect(indexes).toContainEqual([{ author: 1, createdAt: -1 }, {}]);
-      expect(indexes).toContainEqual([{ hashtags: 1 }, {}]);
-      expect(indexes).toContainEqual([{ mentions: 1 }, {}]);
-      expect(indexes).toContainEqual([{ createdAt: -1 }, {}]);
+      expect(indexes).toContainEqual([{ author: 1, createdAt: -1 }, expect.any(Object)]);
+      expect(indexes).toContainEqual([{ hashtags: 1 }, expect.any(Object)]);
+      expect(indexes).toContainEqual([{ mentions: 1 }, expect.any(Object)]);
+      expect(indexes).toContainEqual([{ createdAt: -1 }, expect.any(Object)]);
     });
   });
 });

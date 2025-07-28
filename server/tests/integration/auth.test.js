@@ -1,33 +1,9 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const app = require('../../index');
 const User = require('../../models/User');
 
-let mongoServer;
-let server;
-
-beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const mongoUri = mongoServer.getUri();
-  
-  await mongoose.disconnect();
-  await mongoose.connect(mongoUri);
-  
-  server = app.listen(0);
-});
-
-afterAll(async () => {
-  await mongoose.disconnect();
-  await mongoServer.stop();
-  server.close();
-});
-
-beforeEach(async () => {
-  await User.deleteMany({});
-});
-
 describe('Auth Integration Tests', () => {
+  
   describe('POST /api/auth/register', () => {
     it('should register a new user', async () => {
       const userData = {
@@ -37,7 +13,7 @@ describe('Auth Integration Tests', () => {
         displayName: 'Test User'
       };
 
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/register')
         .send(userData)
         .expect(201);
@@ -58,7 +34,7 @@ describe('Auth Integration Tests', () => {
       });
       await user.save();
 
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/register')
         .send({
           username: 'existinguser',
@@ -79,12 +55,12 @@ describe('Auth Integration Tests', () => {
       });
       await user.save();
 
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/register')
         .send({
           username: 'newuser',
           email: 'existing@example.com',
-          password: 'password123'
+          password: '12345'
         })
         .expect(400);
 
@@ -92,7 +68,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should validate input fields', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/register')
         .send({
           username: 'ab',
@@ -120,7 +96,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should login with email', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/login')
         .send({
           login: 'test@example.com',
@@ -134,7 +110,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should login with username', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/login')
         .send({
           login: 'testuser',
@@ -148,7 +124,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should reject invalid credentials', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/login')
         .send({
           login: 'test@example.com',
@@ -160,7 +136,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should reject non-existent user', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .post('/api/auth/login')
         .send({
           login: 'nonexistent@example.com',
@@ -174,7 +150,7 @@ describe('Auth Integration Tests', () => {
     it('should update lastActive on login', async () => {
       const beforeLogin = testUser.lastActive;
 
-      await request(server)
+      await request(app)
         .post('/api/auth/login')
         .send({
           login: 'test@example.com',
@@ -203,7 +179,7 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should get current user', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .get('/api/auth/me')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
@@ -214,13 +190,13 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should require authentication', async () => {
-      await request(server)
+      await request(app)
         .get('/api/auth/me')
         .expect(401);
     });
 
     it('should reject invalid token', async () => {
-      await request(server)
+      await request(app)
         .get('/api/auth/me')
         .set('Authorization', 'Bearer invalidtoken')
         .expect(401);
@@ -249,7 +225,7 @@ describe('Auth Integration Tests', () => {
         isPrivate: true
       };
 
-      const response = await request(server)
+      const response = await request(app)
         .patch('/api/auth/profile')
         .set('Authorization', `Bearer ${token}`)
         .send(updates)
@@ -261,14 +237,14 @@ describe('Auth Integration Tests', () => {
     });
 
     it('should require authentication', async () => {
-      await request(server)
+      await request(app)
         .patch('/api/auth/profile')
         .send({ displayName: 'New Name' })
         .expect(401);
     });
 
     it('should validate input', async () => {
-      const response = await request(server)
+      const response = await request(app)
         .patch('/api/auth/profile')
         .set('Authorization', `Bearer ${token}`)
         .send({

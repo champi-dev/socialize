@@ -56,6 +56,9 @@ describe('Auth Middleware', () => {
 
     it('should reject token without Bearer prefix', async () => {
       req.header.mockReturnValue('invalidtoken');
+      jwt.verify.mockImplementation(() => {
+        throw new Error('jwt malformed');
+      });
       
       await auth(req, res, next);
       
@@ -168,7 +171,9 @@ describe('Auth Middleware', () => {
     it('should handle database errors gracefully', async () => {
       req.header.mockReturnValue('Bearer validtoken');
       jwt.verify.mockReturnValue({ _id: 'userId' });
-      User.findOne.mockRejectedValue(new Error('Database error'));
+      User.findOne.mockImplementation(() => {
+        throw new Error('Database error');
+      });
       
       await optionalAuth(req, res, next);
       

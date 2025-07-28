@@ -278,19 +278,22 @@ describe('Auth Controller', () => {
         following: []
       };
       
-      const mockPopulate = jest.fn().mockReturnThis();
+      const mockPopulateFollowers = jest.fn().mockReturnThis();
+      const mockPopulateFollowing = jest.fn().mockResolvedValue(mockUser);
       
       User.findById.mockReturnValue({
-        populate: mockPopulate
+        populate: mockPopulateFollowers
       });
       
-      mockPopulate.mockResolvedValue(mockUser);
+      mockPopulateFollowers.mockReturnValue({
+        populate: mockPopulateFollowing
+      });
       
       await getMe(req, res);
       
       expect(User.findById).toHaveBeenCalledWith('testUserId');
-      expect(mockPopulate).toHaveBeenCalledWith('followers', 'username displayName avatar');
-      expect(mockPopulate).toHaveBeenCalledWith('following', 'username displayName avatar');
+      expect(mockPopulateFollowers).toHaveBeenCalledWith('followers', 'username displayName avatar');
+      expect(mockPopulateFollowing).toHaveBeenCalledWith('following', 'username displayName avatar');
       expect(res.json).toHaveBeenCalledWith(mockUser);
     });
 

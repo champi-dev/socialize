@@ -25,6 +25,9 @@ module.exports = {
       preset: 'ts-jest',
       testEnvironment: 'jsdom',
       testMatch: ['<rootDir>/client/**/*.test.{ts,tsx}'],
+      transform: {
+        '^.+\\.(ts|tsx)$': 'ts-jest',
+      },
       moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/client/$1',
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy'

@@ -31,7 +31,9 @@ function verifyToken(token) {
     if (signature === expectedSignature) {
       return JSON.parse(Buffer.from(body, 'base64').toString());
     }
-  } catch (e) {}
+  } catch (e) {
+    // Ignore signature verification errors
+  }
   return null;
 }
 

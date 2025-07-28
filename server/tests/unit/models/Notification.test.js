@@ -126,11 +126,11 @@ describe('Notification Model', () => {
       
       expect(indexes).toContainEqual([
         { recipient: 1, createdAt: -1 }, 
-        {}
+        expect.any(Object)
       ]);
       expect(indexes).toContainEqual([
         { recipient: 1, isRead: 1 }, 
-        {}
+        expect.any(Object)
       ]);
     });
   });

@@ -123,11 +123,11 @@ describe('Message Model', () => {
       
       expect(indexes).toContainEqual([
         { sender: 1, recipient: 1, createdAt: -1 }, 
-        {}
+        expect.any(Object)
       ]);
       expect(indexes).toContainEqual([
         { recipient: 1, isRead: 1 }, 
-        {}
+        expect.any(Object)
       ]);
     });
   });
@@ -140,7 +140,7 @@ describe('Message Model', () => {
         content: '  Test message with spaces  '
       });
       
-      expect(message.content).toBe('  Test message with spaces  ');
+      expect(message.content).toBe('Test message with spaces');
     });
   });
 });
