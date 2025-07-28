@@ -16,8 +16,7 @@
     "test:e2e:open": "cypress open",
     "test:all": "npm run test && npm run test:e2e",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "postinstall": "cd client && npm install"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "social",
