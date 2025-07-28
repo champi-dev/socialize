@@ -3,6 +3,13 @@ import connectDB from '@/lib/mongodb'
 
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+    
     await connectDB()
     
     // For now, return mock data since we haven't created the Post model yet
@@ -36,6 +43,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+    
     await connectDB()
     
     const body = await request.json()

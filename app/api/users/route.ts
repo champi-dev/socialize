@@ -4,6 +4,13 @@ import User from '@/lib/models/User'
 
 export async function GET(request: NextRequest) {
   try {
+    if (!process.env.MONGODB_URI) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+    
     await connectDB()
     
     const { searchParams } = new URL(request.url)
