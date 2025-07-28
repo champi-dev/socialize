@@ -10,4 +10,6 @@ build/
 coverage/
 .nyc_output/
 uploads/
-tmp/
+tmp/client/.next/
+cypress/screenshots/
+cypress/videos/
